@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cognito Lab</title>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.713.0.min.js"></script>
+</head>
+<body>
+    <h1>Amazon Cognito Lab</h1>
+    <input type="textbox" id="user" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="signIn()">Sign In</button>
+    <script>
+        var poolData = {
+            UserPoolId: 'us-east-1_dYERqOARZ',
+            ClientId: '6ut96aqobhkjevcibculjjhn50'
+        };
+        var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+
+        function signIn() {
+            var userData = {
+                Username: document.getElementById('user').value,
+                Pool: userPool
+            };
+            var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
+            var authenticationData = {
+                Username: userData.Username,
+                Password: document.getElementById('password').value,
+            };
+            var authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
+            cognitoUser.authenticateUser(authenticationDetails, {
+                onSuccess: function (result) {
+                    console.log('Access token: ' + result.getAccessToken().getJwtToken());
+                },
+                onFailure: function(err) {
+                    alert(err.message || JSON.stringify(err));
+                }
+            });
+        }
+    </script>
+</body>
+</html>
